@@ -1,0 +1,38 @@
+{
+  "benchmark": "AAAAAAAABench",
+  "version": "0.1",
+  "collect": {
+    "prompts_file": "prompts.json",
+    "models": [
+      "anthropic/claude-sonnet-4",
+      "anthropic/claude-haiku-4.5",
+      "openai/gpt-4o-2024-08-06",
+      "openai/gpt-4o-mini-2024-07-18",
+      "google/gemini-2.0-flash-001",
+      "google/gemini-2.5-flash",
+      "mistralai/mistral-large-2512",
+      "deepseek/deepseek-v3.2"
+    ],
+    "categories": [],
+    "num_runs": 1,
+    "parallelism": 8,
+    "max_inflight_per_model": 2,
+    "temperature": null,
+    "max_tokens": 4096,
+    "streaming": true,
+    "shuffle_tasks": true,
+    "rate_limit_cooldown_seconds": 20.0,
+    "checkpoint_fsync_every": 10
+  },
+  "detection": {
+    "early_termination": true,
+    "consecutive_a_threshold": 500,
+    "a_ratio_threshold": 0.5,
+    "longest_run_threshold": 100
+  },
+  "output": {
+    "responses_file": "responses.jsonl",
+    "summary_file": "summary.json",
+    "run_dir": "data/runs"
+  }
+}
