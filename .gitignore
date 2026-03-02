@@ -1,0 +1,34 @@
+# BMAD tooling
+_bmad/
+_bmad-output/
+
+# Claude Code
+.claude/
+
+# Environment
+.env
+.venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# Tools
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+
+# IDE
+.idea/
+
+# Project outputs
+results/
+
+# OS
+.DS_Store
+
+# Implementation inspiration
+bullshit-benchmark/
