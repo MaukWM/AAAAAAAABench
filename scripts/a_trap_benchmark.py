@@ -960,6 +960,8 @@ def write_collect_review_csv(path: pathlib.Path, rows: list[dict[str, Any]]) -> 
         "detection_stuck",
         "detection_hit_token_limit",
         "detection_completion_tokens",
+        "detection_reasoning_tokens",
+        "detection_output_tokens",
         "detection_max_tokens_effective",
         "detection_completion_ratio",
         "detection_total_chars",
@@ -1005,6 +1007,8 @@ def write_collect_review_csv(path: pathlib.Path, rows: list[dict[str, Any]]) -> 
                     "detection_stuck": detection.get("stuck", ""),
                     "detection_hit_token_limit": detection.get("hit_token_limit", ""),
                     "detection_completion_tokens": detection.get("completion_tokens", ""),
+                    "detection_reasoning_tokens": detection.get("reasoning_tokens", ""),
+                    "detection_output_tokens": detection.get("output_tokens", ""),
                     "detection_max_tokens_effective": detection.get("max_tokens_effective", ""),
                     "detection_completion_ratio": detection.get("completion_ratio", ""),
                     "detection_total_chars": detection.get("total_chars", ""),
@@ -1192,6 +1196,7 @@ def detect_trap(
     response: str,
     finish_reason: str | None = None,
     completion_tokens: int | None = None,
+    reasoning_tokens: int | None = None,
     max_tokens: int = 0,
     thresholds: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
@@ -1199,8 +1204,11 @@ def detect_trap(
 
     Classification rules:
     - stuck:     finish_reason == "length" (hit token limit, could not stop)
-    - borderline: finish_reason == "stop" AND completion_tokens >= borderline_ratio * max_tokens
+    - borderline: finish_reason == "stop" AND output_tokens >= borderline_ratio * max_tokens
     - not_stuck: finish_reason == "stop" AND low token count
+
+    For reasoning models, output_tokens = completion_tokens - reasoning_tokens
+    (we only count visible output, not internal thinking).
     """
     cfg = thresholds or {}
     borderline_ratio = cfg.get("borderline_ratio", 0.5)
@@ -1208,10 +1216,16 @@ def detect_trap(
     hit_token_limit = (finish_reason == "length")
     total_chars = len(response)
 
+    # Subtract reasoning tokens to get visible output tokens
+    if completion_tokens is not None and reasoning_tokens:
+        output_tokens = max(completion_tokens - reasoning_tokens, 0)
+    else:
+        output_tokens = completion_tokens
+
     max_tokens_effective = max_tokens if max_tokens > 0 else 0
     completion_ratio = (
-        round(completion_tokens / max_tokens_effective, 4)
-        if completion_tokens is not None and max_tokens_effective > 0
+        round(output_tokens / max_tokens_effective, 4)
+        if output_tokens is not None and max_tokens_effective > 0
         else None
     )
 
@@ -1230,6 +1244,8 @@ def detect_trap(
         "stuck": classification == "stuck",
         "hit_token_limit": hit_token_limit,
         "completion_tokens": completion_tokens,
+        "reasoning_tokens": reasoning_tokens,
+        "output_tokens": output_tokens,
         "max_tokens_effective": max_tokens_effective,
         "completion_ratio": completion_ratio,
         "total_chars": total_chars,
@@ -1453,10 +1469,12 @@ def collect_one(
 
         # Trap detection
         usage = payload.get("usage", {})
+        completion_tokens_details = usage.get("completion_tokens_details") or {}
         record["detection"] = detect_trap(
             response_text,
             finish_reason=record["response_finish_reason"],
             completion_tokens=usage.get("completion_tokens"),
+            reasoning_tokens=completion_tokens_details.get("reasoning_tokens"),
             max_tokens=effective_max_tokens,
             thresholds=detection_config,
         )
