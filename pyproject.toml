@@ -1,0 +1,11 @@
+[project]
+name = "aaaaaaaa-bench"
+version = "0.1.0"
+description = "A-Trap Benchmark: tests whether LLMs get stuck generating repetitive A sequences"
+requires-python = ">=3.12"
+dependencies = [
+    "python-dotenv>=1.0",
+]
+
+[project.scripts]
+a-trap-bench = "scripts.a_trap_benchmark:main"

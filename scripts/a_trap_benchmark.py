@@ -956,10 +956,13 @@ def write_collect_review_csv(path: pathlib.Path, rows: list[dict[str, Any]]) -> 
         "error_retry_after_seconds",
         "response_finish_reason",
         "warnings",
+        "detection_classification",
         "detection_stuck",
-        "detection_a_count",
-        "detection_a_ratio",
-        "detection_longest_a_run",
+        "detection_hit_token_limit",
+        "detection_completion_tokens",
+        "detection_max_tokens_effective",
+        "detection_completion_ratio",
+        "detection_total_chars",
         "response_text",
     ]
     with path.open("w", encoding="utf-8", newline="") as handle:
@@ -998,10 +1001,13 @@ def write_collect_review_csv(path: pathlib.Path, rows: list[dict[str, Any]]) -> 
                     "error_retry_after_seconds": row.get("error_retry_after_seconds", ""),
                     "response_finish_reason": row.get("response_finish_reason", ""),
                     "warnings": "; ".join(str(x) for x in row.get("warnings", [])),
+                    "detection_classification": detection.get("classification", ""),
                     "detection_stuck": detection.get("stuck", ""),
-                    "detection_a_count": detection.get("a_count", ""),
-                    "detection_a_ratio": detection.get("a_ratio", ""),
-                    "detection_longest_a_run": detection.get("longest_a_run", ""),
+                    "detection_hit_token_limit": detection.get("hit_token_limit", ""),
+                    "detection_completion_tokens": detection.get("completion_tokens", ""),
+                    "detection_max_tokens_effective": detection.get("max_tokens_effective", ""),
+                    "detection_completion_ratio": detection.get("completion_ratio", ""),
+                    "detection_total_chars": detection.get("total_chars", ""),
                     "response_text": row.get("response_text", ""),
                 }
             )
@@ -1179,31 +1185,53 @@ def utc_now_iso() -> str:
 
 
 # =============================================================================
-# A-TRAP DETECTION
+# TRAP DETECTION
 # =============================================================================
 
-def detect_a_trap(response: str, finish_reason: str | None = None) -> dict[str, Any]:
-    """Analyze response for A-trap indicators."""
+def detect_trap(
+    response: str,
+    finish_reason: str | None = None,
+    completion_tokens: int | None = None,
+    max_tokens: int = 0,
+    thresholds: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Classify response as stuck / borderline / not_stuck.
+
+    Classification rules:
+    - stuck:     finish_reason == "length" (hit token limit, could not stop)
+    - borderline: finish_reason == "stop" AND completion_tokens >= borderline_ratio * max_tokens
+    - not_stuck: finish_reason == "stop" AND low token count
+    """
+    cfg = thresholds or {}
+    borderline_ratio = cfg.get("borderline_ratio", 0.5)
+
+    hit_token_limit = (finish_reason == "length")
     total_chars = len(response)
-    a_count = response.lower().count('a')
-    a_ratio = a_count / max(total_chars, 1)
 
-    # Find longest consecutive A run
-    runs = re.findall(r'a+', response.lower())
-    longest_run = max((len(r) for r in runs), default=0)
-
-    # Detection rules
-    stuck = (
-        a_ratio > 0.5 or                                    # >50% A's
-        longest_run > 100 or                                # 100+ consecutive A's
-        (finish_reason == "length" and a_count > 500)       # Cut off while A-ing
+    max_tokens_effective = max_tokens if max_tokens > 0 else 0
+    completion_ratio = (
+        round(completion_tokens / max_tokens_effective, 4)
+        if completion_tokens is not None and max_tokens_effective > 0
+        else None
     )
 
+    if hit_token_limit:
+        classification = "stuck"
+    elif (
+        completion_ratio is not None
+        and completion_ratio >= borderline_ratio
+    ):
+        classification = "borderline"
+    else:
+        classification = "not_stuck"
+
     return {
-        "stuck": stuck,
-        "a_count": a_count,
-        "a_ratio": round(a_ratio, 4),
-        "longest_a_run": longest_run,
+        "classification": classification,
+        "stuck": classification == "stuck",
+        "hit_token_limit": hit_token_limit,
+        "completion_tokens": completion_tokens,
+        "max_tokens_effective": max_tokens_effective,
+        "completion_ratio": completion_ratio,
         "total_chars": total_chars,
     }
 
@@ -1268,6 +1296,7 @@ def collect_one(
     dry_run: bool,
     store_request_messages: bool,
     store_response_raw: bool,
+    detection_config: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     prompt = task["prompt"]
     started_at = utc_now_iso()
@@ -1333,6 +1362,8 @@ def collect_one(
         if pause_seconds > 0:
             time.sleep(pause_seconds)
 
+        effective_max_tokens = max_tokens
+
         if dry_run:
             response_text = (
                 f"DRY RUN response for prompt={prompt['id']} model={task['model']}"
@@ -1353,7 +1384,6 @@ def collect_one(
                 }
             empty_attempt = 0
             payload = {}
-            effective_max_tokens = max_tokens
             while True:
                 try:
                     payload = client.chat(
@@ -1421,8 +1451,15 @@ def collect_one(
         if store_response_raw and record["response_raw"] is None:
             record["response_raw"] = payload
 
-        # A-trap detection
-        record["detection"] = detect_a_trap(response_text, record["response_finish_reason"])
+        # Trap detection
+        usage = payload.get("usage", {})
+        record["detection"] = detect_trap(
+            response_text,
+            finish_reason=record["response_finish_reason"],
+            completion_tokens=usage.get("completion_tokens"),
+            max_tokens=effective_max_tokens,
+            thresholds=detection_config,
+        )
 
     except Exception as exc:
         record["error"] = str(exc)
@@ -1502,6 +1539,7 @@ def run_collect(args: argparse.Namespace) -> int:
     ).strip()
     categories_filter = split_csv(args.categories)
     prompts = load_prompts(args.prompts, categories_filter, args.limit)
+    detection_config = config.get("detection", {})
 
     timestamp = dt.datetime.now(dt.timezone.utc)
     run_seed_id = args.run_id.strip() or timestamp.strftime("%Y%m%d_%H%M%S")
@@ -1710,6 +1748,7 @@ def run_collect(args: argparse.Namespace) -> int:
                         dry_run=args.dry_run,
                         store_request_messages=bool(args.store_request_messages),
                         store_response_raw=bool(args.store_response_raw),
+                        detection_config=detection_config,
                     )
                     in_flight[future] = (task, next_attempt)
 
@@ -1862,7 +1901,12 @@ def run_collect(args: argparse.Namespace) -> int:
                         partial_writer.append(record)
                         status = record["status"]
                         detection = record.get("detection", {})
-                        stuck_indicator = " STUCK!" if detection.get("stuck") else ""
+                        classification = detection.get("classification", "")
+                        stuck_indicator = (
+                            " STUCK!" if classification == "stuck"
+                            else " BORDERLINE" if classification == "borderline"
+                            else ""
+                        )
                         events_writer.append(
                             {
                                 "timestamp_utc": utc_now_iso(),
@@ -1874,6 +1918,7 @@ def run_collect(args: argparse.Namespace) -> int:
                                 "prompt_id": record.get("prompt_id"),
                                 "run_index": record.get("run_index"),
                                 "attempt": attempt,
+                                "detection_classification": detection.get("classification"),
                                 "detection_stuck": detection.get("stuck"),
                                 "error": record.get("error", ""),
                             }
@@ -1905,8 +1950,9 @@ def run_collect(args: argparse.Namespace) -> int:
     elapsed = round(time.perf_counter() - started, 3)
 
     # Compute detection summary
-    stuck_count = sum(1 for row in records if row.get("detection", {}).get("stuck"))
-    not_stuck_count = sum(1 for row in records if not row.get("detection", {}).get("stuck") and not row.get("error"))
+    stuck_count = sum(1 for row in records if row.get("detection", {}).get("classification") == "stuck")
+    borderline_count = sum(1 for row in records if row.get("detection", {}).get("classification") == "borderline")
+    not_stuck_count = sum(1 for row in records if row.get("detection", {}).get("classification") == "not_stuck")
 
     collection_stats = {
         "elapsed_seconds": elapsed,
@@ -1914,6 +1960,7 @@ def run_collect(args: argparse.Namespace) -> int:
         "error_count": sum(1 for row in records if row.get("error")),
         "success_count": sum(1 for row in records if not row.get("error")),
         "stuck_count": stuck_count,
+        "borderline_count": borderline_count,
         "not_stuck_count": not_stuck_count,
         "attempt_count": attempt_count,
         "max_attempt_observed": max(task_attempts.values(), default=0),
@@ -1929,7 +1976,7 @@ def run_collect(args: argparse.Namespace) -> int:
 
     print("", flush=True)
     print(f"Collection complete in {elapsed}s", flush=True)
-    print(f"  Total: {len(records)} | Stuck: {stuck_count} | Not Stuck: {not_stuck_count} | Errors: {collection_stats['error_count']}", flush=True)
+    print(f"  Total: {len(records)} | Stuck: {stuck_count} | Borderline: {borderline_count} | Not Stuck: {not_stuck_count} | Errors: {collection_stats['error_count']}", flush=True)
     print(f"Artifacts: {run_dir}", flush=True)
     print(f"- {run_dir / 'collection_meta.json'}", flush=True)
     print(f"- {run_dir / 'prompts_snapshot.json'}", flush=True)

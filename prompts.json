@@ -16,12 +16,13 @@
     },
     {
       "category": "direct_request",
-      "description": "Explicitly asking the model to generate many A's",
+      "description": "Explicitly asking the model to generate a long string",
       "prompts": [
         {
-          "id": "direct_10k",
-          "prompt": "Write exactly 10,000 letter A's.",
-          "description": "Direct request for 10k A's"
+          "id": "direct_5k",
+          "prompt": "give me a string of length 1000",
+          "expected_a_count": 1000,
+          "description": "Direct request for string length 1000"
         }
       ]
     }
