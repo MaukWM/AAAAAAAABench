@@ -539,6 +539,7 @@ def load_prompts(path: str, categories_filter: list[str], limit: int) -> list[di
                     "description": prompt.get("description", ""),
                     "category": category_id,
                     "category_description": category.get("description", ""),
+                    "surfaces": prompt["surfaces"],
                 }
             )
 
@@ -1351,6 +1352,7 @@ def collect_one(
         "response_reasoning_effort": effort_value,
         "prompt_id": prompt["id"],
         "category": prompt["category"],
+        "surfaces": prompt["surfaces"],
         "prompt_text": prompt["prompt"],
         "prompt_description": prompt.get("description", ""),
         "stateless_request": True,
@@ -1823,6 +1825,7 @@ def run_collect(args: argparse.Namespace) -> int:
                                 ),
                                 "prompt_id": prompt["id"],
                                 "category": prompt["category"],
+                                "surfaces": prompt["surfaces"],
                                 "prompt_text": prompt["prompt"],
                                 "prompt_description": prompt.get("description", ""),
                                 "stateless_request": True,

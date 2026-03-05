@@ -9,9 +9,9 @@
     "categories": [],
     "num_runs": 1,
     "parallelism": 8,
-    "max_inflight_per_model": 2,
+    "max_inflight_per_model": 8,
     "temperature": null,
-    "max_tokens": 4096,
+    "max_tokens": 32768,
     "shuffle_tasks": true,
     "rate_limit_cooldown_seconds": 20.0,
     "checkpoint_fsync_every": 10
