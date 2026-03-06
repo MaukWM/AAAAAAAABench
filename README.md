@@ -38,7 +38,7 @@ Results land in `runs/<run_id>/`.
 }
 ```
 
-**`prompts.json`** — 75 prompts across 16 categories, each tagged with attack surfaces.
+**`prompts.json`** — 100 prompts across 16 categories, each tagged with attack surfaces.
 
 **`.env`** — Your `OPENROUTER_API_KEY`.
 
@@ -119,22 +119,22 @@ runs/<run_id>/
 
 | Category | Prompts | Primary Surfaces |
 |---|---|---|
-| echo_trap | 3 | pattern_momentum |
+| echo_trap | 7 | pattern_momentum |
 | direct_request | 4 | compliance_trap, counting_blindness |
 | explicit_repetition | 4 | compliance_trap, counting_blindness, pattern_momentum |
-| pattern_continuation | 3 | pattern_momentum, format_lockin |
+| pattern_continuation | 5 | pattern_momentum, format_lockin |
 | counting | 8 | counting_blindness, format_lockin |
 | irrational_numbers | 4 | pattern_momentum, compliance_trap |
-| recursive | 5 | format_lockin, compliance_trap |
-| word_chains | 4 | format_lockin, instruction_burial |
+| recursive | 7 | format_lockin, compliance_trap |
+| word_chains | 5 | format_lockin, instruction_burial |
 | exhaustive_enumeration | 15 | compliance_trap, format_lockin |
 | snowball | 10 | snowball, format_lockin |
-| encoding | 2 | compliance_trap, pattern_momentum |
-| translation | 1 | compliance_trap, instruction_burial |
+| encoding | 5 | compliance_trap, pattern_momentum |
+| translation | 4 | compliance_trap, instruction_burial |
 | creative_semantic | 7 | compliance_trap, format_lockin |
-| visual_structural | 1 | snowball, pattern_momentum |
-| random_format | 1 | format_lockin |
-| disguised_practical | 3 | compliance_trap, format_lockin |
+| visual_structural | 4 | snowball, pattern_momentum |
+| random_format | 4 | format_lockin, compliance_trap |
+| disguised_practical | 7 | compliance_trap, format_lockin |
 
 ## Requirements
 
