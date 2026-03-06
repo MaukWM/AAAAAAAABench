@@ -23,8 +23,7 @@
       "x-ai/grok-4.1-fast",
       "bytedance-seed/seed-1.6",
       "qwen/qwen3.5-397b-a17b",
-      "moonshotai/kimi-k2.5",
-      "baidu/ernie-4.5-300b-a47b"
+      "moonshotai/kimi-k2.5"
     ],
     "categories": [],
     "num_runs": 1,

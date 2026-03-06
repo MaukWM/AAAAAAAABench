@@ -1,9 +1,9 @@
 {
   "phase": "collect",
   "run_id": "20260306_145859",
-  "timestamp_utc": "2026-03-06T19:48:13.252085+00:00",
+  "timestamp_utc": "2026-03-06T23:26:16.371566+00:00",
   "resumed": true,
-  "resumed_completed_rows": 700,
+  "resumed_completed_rows": 2000,
   "prompts_path": "C:\\Workspace\\AAAAAAAABench\\prompts.json",
   "prompt_count": 100,
   "models": [
@@ -26,8 +26,7 @@
     "x-ai/grok-4.1-fast",
     "bytedance-seed/seed-1.6",
     "qwen/qwen3.5-397b-a17b",
-    "moonshotai/kimi-k2.5",
-    "baidu/ernie-4.5-300b-a47b"
+    "moonshotai/kimi-k2.5"
   ],
   "model_variants": [
     {
@@ -209,19 +208,10 @@
       "model_row": "kimi-k2.5@reasoning=default",
       "model_label": "moonshotai/kimi-k2.5@reasoning=default",
       "response_reasoning_effort": null
-    },
-    {
-      "model_id": "baidu/ernie-4.5-300b-a47b",
-      "model_org": "baidu",
-      "model_name": "ernie-4.5-300b-a47b",
-      "model_reasoning_level": "default",
-      "model_row": "ernie-4.5-300b-a47b@reasoning=default",
-      "model_label": "baidu/ernie-4.5-300b-a47b@reasoning=default",
-      "response_reasoning_effort": null
     }
   ],
   "num_runs": 1,
-  "task_count": 2100,
+  "task_count": 2000,
   "parallelism": 64,
   "max_inflight_per_model": 8,
   "temperature": null,
