@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>BullshitBench Explorer</title>
-  <link rel="icon" href="../docs/images/bsbench.png">
+  <title>AAAAAAAABench Explorer</title>
+  <!-- <link rel="icon" href="favicon.png"> -->
   <style>
     :root {
       --bg: #f7f4ec;
@@ -1424,17 +1424,16 @@
   <div class="page">
     <header class="hero">
       <div class="hero-title">
-        <img class="hero-logo" src="../docs/images/bsbench.png" alt="BullshitBench logo">
-        <h1>BullshitBench: Models Answering Nonsense Questions</h1>
+        <h1>AAAAAAAABench: Models That Can't Stop Repeating Themselves</h1>
       </div>
       <p class="hero-subtitle">
-        This benchmark measures whether models detect broken premises, call out the nonsense directly, and avoid confidently
-        continuing with invalid assumptions.
+        This benchmark measures whether models get stuck generating repetitive sequences when prompted to produce infinite or unbounded output.
+        Models ranked by vulnerability — most stuck = #1.
       </p>
     </header>
 
     <section class="panel filters-panel">
-      <h2>BullshitBench: Filters</h2>
+      <h2>AAAAAAAABench: Filters</h2>
       <div class="grid-3 filters-grid">
         <label>
           <span>Benchmark Version</span>
@@ -1453,27 +1452,12 @@
           <select id="filterReasoning"></select>
         </label>
         <label>
-          <span>Technique</span>
+          <span>Category</span>
           <select id="filterTechnique"></select>
         </label>
         <label>
-          <span>Domain</span>
+          <span>Attack Surface</span>
           <select id="filterDomain"></select>
-        </label>
-      </div>
-      <div class="judge-filter-row">
-        <span class="small-note">Judges (tick to include):</span>
-        <label class="judge-chip">
-          <input type="checkbox" id="judge1Toggle" checked>
-          <span id="judge1Label">Loading...</span>
-        </label>
-        <label class="judge-chip">
-          <input type="checkbox" id="judge2Toggle" checked>
-          <span id="judge2Label">Loading...</span>
-        </label>
-        <label class="judge-chip">
-          <input type="checkbox" id="judge3Toggle" checked>
-          <span id="judge3Label">Loading...</span>
         </label>
       </div>
       <div class="filter-meta-row">
@@ -1502,11 +1486,11 @@
 
     <section class="panel">
       <div class="chart-head">
-        <h2>BullshitBench: Models Answering Nonsense Questions</h2>
-        <div class="chart-legend" aria-label="Model detection legend">
-          <span class="chart-legend-item"><span class="dot score2"></span>Clear Pushback</span>
-          <span class="chart-legend-item"><span class="dot score1"></span>Partial Challenge</span>
-          <span class="chart-legend-item"><span class="dot score0"></span>Accepted Nonsense</span>
+        <h2>AAAAAAAABench: Stuck Rate by Model</h2>
+        <div class="chart-legend" aria-label="Model stuck rate legend">
+          <span class="chart-legend-item"><span class="dot score2"></span>Stuck</span>
+          <span class="chart-legend-item"><span class="dot score1"></span>Borderline</span>
+          <span class="chart-legend-item"><span class="dot score0"></span>Refused</span>
         </div>
       </div>
       <div class="chart-subguide" id="mainChartOrgGuide"></div>
@@ -1516,7 +1500,7 @@
     <section class="panel hidden-block" id="chartDrilldownPanel">
       <div class="drilldown-head">
         <div>
-          <h2 id="chartDrilldownTitle">BullshitBench: Selected Segment</h2>
+          <h2 id="chartDrilldownTitle">AAAAAAAABench: Selected Segment</h2>
           <p class="small-note" id="chartDrilldownMeta"></p>
         </div>
         <button type="button" id="clearChartDrilldownBtn" class="alt">Clear Selection</button>
@@ -1524,21 +1508,9 @@
       <div id="chartDrilldownBody" class="drilldown-list"></div>
     </section>
 
-    <section class="panel">
-      <h2>BullshitBench: How have models improved?</h2>
-      <p class="small-note">Tracing performance improvements (clear pushback %) with model releases.</p>
-      <div class="launch-controls">
-        <label class="launch-toggle">
-          <input type="checkbox" id="launchBestOnlyToggle" checked>
-          <span>Best models from the same release</span>
-        </label>
-      </div>
-      <svg id="launchScatterSvg" class="launch-plot-svg" viewBox="0 0 1200 420" role="img" aria-label="Green percentage timeline for Anthropic OpenAI and Google models"></svg>
-      <p id="launchScatterMeta" class="small-note"></p>
-    </section>
 
     <section class="panel">
-      <h2>BullshitBench: Model Leaderboard</h2>
+      <h2>AAAAAAAABench: Model Leaderboard</h2>
       <div class="org-key-wrap">
         <span class="small-note">Company colors:</span>
         <div class="org-key" id="orgColorKey"></div>
@@ -1553,11 +1525,13 @@
               <th class="sortable-th" data-sort-key="reasoning">Reasoning <span class="sort-ind" data-sort-ind="reasoning"></span></th>
               <th class="sortable-th" data-sort-key="launchDate">Launch Date <span class="sort-ind" data-sort-ind="launchDate"></span></th>
               <th class="sortable-th" data-sort-key="modelAgeDays">Model Age (days) <span class="sort-ind" data-sort-ind="modelAgeDays"></span></th>
-              <th class="sortable-th" data-sort-key="greenRate">Green % <span class="sort-ind" data-sort-ind="greenRate"></span></th>
-              <th class="sortable-th" data-sort-key="amberRate">Amber % <span class="sort-ind" data-sort-ind="amberRate"></span></th>
-              <th class="sortable-th" data-sort-key="redRate">Red % <span class="sort-ind" data-sort-ind="redRate"></span></th>
+              <th class="sortable-th" data-sort-key="greenRate">Stuck % <span class="sort-ind" data-sort-ind="greenRate"></span></th>
+              <th class="sortable-th" data-sort-key="amberRate">Borderline % <span class="sort-ind" data-sort-ind="amberRate"></span></th>
+              <th class="sortable-th" data-sort-key="redRate">Refused % <span class="sort-ind" data-sort-ind="redRate"></span></th>
               <th class="sortable-th" data-sort-key="errorRate">Error % <span class="sort-ind" data-sort-ind="errorRate"></span></th>
-              <th>Mix (Green/Amber/Red/Error)</th>
+              <th>Mix (Stuck/Borderline/Refused/Error)</th>
+              <th class="sortable-th" data-sort-key="avgTokens">Avg Tokens <span class="sort-ind" data-sort-ind="avgTokens"></span></th>
+              <th class="sortable-th" data-sort-key="tokenStddev">Token StdDev <span class="sort-ind" data-sort-ind="tokenStddev"></span></th>
               <th class="sortable-th" data-sort-key="rows">Rows <span class="sort-ind" data-sort-ind="rows"></span></th>
             </tr>
           </thead>
@@ -1567,7 +1541,7 @@
     </section>
 
     <section class="panel">
-      <h2>BullshitBench: Response Viewer</h2>
+      <h2>AAAAAAAABench: Response Viewer</h2>
       <div class="compare-controls">
         <label>
           <span>Question</span>
@@ -1617,19 +1591,15 @@
   <script>
     const DATASET_OPTIONS = {
       v2: {
-        label: "Benchmark v2 (new)",
+        label: "AAAAAAAABench (latest)",
         basePath: "data/v2/latest",
-      },
-      v1: {
-        label: "Benchmark v1 (original)",
-        basePath: "data/latest",
       },
     };
 
     const CATEGORY_META = {
-      green: { label: "Green", colorClass: "score2", short: "Green" },
-      amber: { label: "Amber", colorClass: "score1", short: "Amber" },
-      red: { label: "Red", colorClass: "score0", short: "Red" },
+      green: { label: "Stuck", colorClass: "score2", short: "Stuck" },
+      amber: { label: "Borderline", colorClass: "score1", short: "Borderline" },
+      red: { label: "Refused", colorClass: "score0", short: "Refused" },
       error: { label: "Error", colorClass: "error", short: "Error" },
     };
     const CATEGORY_ORDER = ["green", "amber", "red", "error"];
@@ -1669,19 +1639,30 @@
       "z-ai": "Z.AI",
     };
     const TECHNIQUE_LABELS = {
-      authoritative_framing_of_nothing: "Confident Nonsense Framing",
-      causal_chimera: "Fake Cause-and-Effect Mix",
-      cross_domain_concept_stitching: "Cross-Domain Concept Stitching",
-      false_granularity: "Fake Precision",
-      inverted_nonexistent_dependency: "Invented Dependency Reversal",
-      jargon_soup: "Jargon Soup",
-      misapplied_mechanism: "Misapplied Mechanism",
-      plausible_nonexistent_framework: "Plausible but Fake Framework",
-      reified_metaphor: "Literalized Metaphor",
-      subtle_premise_violation: "Subtle Premise Violation",
-      temporal_category_error: "Time/Category Mix-up",
-      wrong_relationship: "Wrong Relationship",
-      wrong_unit_of_analysis: "Wrong Unit of Analysis",
+      counting: "Counting",
+      creative_semantic: "Creative / Semantic",
+      direct_request: "Direct Request",
+      disguised_practical: "Disguised Practical",
+      echo_trap: "Echo Trap",
+      encoding: "Encoding",
+      exhaustive_enumeration: "Exhaustive Enumeration",
+      explicit_repetition: "Explicit Repetition",
+      irrational_numbers: "Irrational Numbers",
+      pattern_continuation: "Pattern Continuation",
+      random_format: "Random Format",
+      recursive: "Recursive",
+      snowball: "Snowball",
+      translation: "Translation",
+      visual_structural: "Visual / Structural",
+      word_chains: "Word Chains",
+    };
+    const SURFACE_LABELS = {
+      pattern_momentum: "Pattern Momentum",
+      counting_blindness: "Counting Blindness",
+      instruction_burial: "Instruction Burial",
+      compliance_trap: "Compliance Trap",
+      format_lockin: "Format Lock-in",
+      snowball: "Snowball / Exponential",
     };
 
     const state = {
@@ -1741,12 +1722,15 @@
       el.filterReasoning = document.getElementById("filterReasoning");
       el.filterTechnique = document.getElementById("filterTechnique");
       el.filterDomain = document.getElementById("filterDomain");
-      el.judge1Toggle = document.getElementById("judge1Toggle");
-      el.judge2Toggle = document.getElementById("judge2Toggle");
-      el.judge3Toggle = document.getElementById("judge3Toggle");
-      el.judge1Label = document.getElementById("judge1Label");
-      el.judge2Label = document.getElementById("judge2Label");
-      el.judge3Label = document.getElementById("judge3Label");
+      const dummyEl = document.createElement("input");
+      dummyEl.type = "checkbox";
+      dummyEl.disabled = true;
+      el.judge1Toggle = dummyEl;
+      el.judge2Toggle = dummyEl;
+      el.judge3Toggle = dummyEl;
+      el.judge1Label = document.createElement("span");
+      el.judge2Label = document.createElement("span");
+      el.judge3Label = document.createElement("span");
       el.filterQuery = document.getElementById("filterQuery");
       el.compareQuestion = document.getElementById("compareQuestion");
       el.compareModelA = document.getElementById("compareModelA");
@@ -2442,47 +2426,12 @@
     }
 
     function categoryKey(row) {
-      const chosenJudges = selectedJudgeIds();
-      if (!chosenJudges.length) {
-        return "error";
-      }
-      const consensusBucket = consensusScoreBucket(row);
-      if (consensusBucket === "error") {
-        return "error";
-      }
-      if (isFullJudgeSelection(chosenJudges) && consensusBucket !== null) {
-        return categoryFromScore(consensusBucket);
-      }
-      const categories = chosenJudges
-        .map((judgeIndex) => judgeScoreFromRow(row, judgeIndex))
-        .filter((score) => score !== null)
-        .map((score) => categoryFromScore(score));
-
-      if (!categories.length) {
-        if (consensusBucket !== null) {
-          return categoryFromScore(consensusBucket);
-        }
-        return "error";
-      }
-      if (categories.length === 1) {
-        return categories[0];
-      }
-
-      const counts = { green: 0, amber: 0, red: 0 };
-      categories.forEach((category) => {
-        if (Object.prototype.hasOwnProperty.call(counts, category)) {
-          counts[category] += 1;
-        }
-      });
-      const maxCount = Math.max(counts.green, counts.amber, counts.red);
-      const winners = Object.entries(counts)
-        .filter(([, count]) => count === maxCount && count > 0)
-        .map(([category]) => category);
-
-      if (winners.length === 1) {
-        return winners[0];
-      }
-      return "amber";
+      if (!row || !row.detection) return "error";
+      const cls = row.detection.classification;
+      if (cls === "stuck") return "green";
+      if (cls === "borderline") return "amber";
+      if (cls === "not_stuck") return "red";
+      return "error";
     }
 
     function categoryRank(category) {
@@ -2521,6 +2470,10 @@
       if (!aggregateRows.length) {
         return responses.map((row) => ({
           ...row,
+          question_id: row.prompt_id || row.question_id,
+          question: row.prompt_text || row.question || "",
+          technique: row.category || row.technique || "",
+          domain: row.surfaces || row.domain || "",
           consensus_score: null,
           status: row.status || "ok",
           judge_1_score: null,
@@ -2567,6 +2520,12 @@
         .filter(Boolean)
         .map((token) => titleCaseWord(token))
         .join(" ");
+    }
+
+    function displaySurface(value) {
+      const raw = String(value || "unknown");
+      if (SURFACE_LABELS[raw]) return SURFACE_LABELS[raw];
+      return raw.split("_").filter(Boolean).map((t) => titleCaseWord(t)).join(" ");
     }
 
     function fillSelect(selectEl, values, keep = "all", labelFormatter = (value) => value) {
@@ -2830,8 +2789,9 @@
         if (technique !== "all" && String(row.technique || "") !== technique) {
           return false;
         }
-        if (domain !== "all" && String(row.domain || "") !== domain) {
-          return false;
+        if (domain !== "all") {
+          const surfaces = Array.isArray(row.domain) ? row.domain : [row.domain || ""];
+          if (!surfaces.includes(domain)) return false;
         }
         if (!allowedCategories.has(categoryKey(row))) {
           return false;
@@ -2843,7 +2803,7 @@
             row.question_id,
             row.question,
             row.technique,
-            row.domain,
+            Array.isArray(row.domain) ? row.domain.join(" ") : row.domain,
             row.response_text,
           ]
             .join(" ")
@@ -2971,6 +2931,13 @@
     function summarizeRows(rows) {
       const counts = aggregateCounts(rows);
       const scored = counts.green + counts.amber + counts.red;
+      const tokens = rows
+        .map((r) => r.detection && Number.isFinite(r.detection.completion_tokens) ? r.detection.completion_tokens : null)
+        .filter((t) => t !== null);
+      const avgTokens = tokens.length ? tokens.reduce((a, b) => a + b, 0) / tokens.length : 0;
+      const tokenStddev = tokens.length > 1
+        ? Math.sqrt(tokens.reduce((sum, t) => sum + (t - avgTokens) ** 2, 0) / (tokens.length - 1))
+        : 0;
       return {
         counts,
         rows: rows.length,
@@ -2979,6 +2946,8 @@
         amberRate: pct(counts.amber, scored),
         redRate: pct(counts.red, scored),
         errorRate: pct(counts.error, rows.length),
+        avgTokens: Math.round(avgTokens),
+        tokenStddev: Math.round(tokenStddev),
       };
     }
 
@@ -2994,7 +2963,7 @@
         .map((item) => {
           return `
             <div class="bar-row">
-              <div class="name">${escapeHtml(item.technique)}</div>
+              <div class="name">${escapeHtml(displayTechnique(item.technique))}</div>
               <div class="bar"><span style="width:${item.greenRate.toFixed(2)}%"></span></div>
               <div class="bar-value">${formatPct(item.greenRate)}</div>
             </div>
@@ -3863,7 +3832,7 @@
         .sort((a, b) => String(a.question_id || "").localeCompare(String(b.question_id || "")));
       const categoryMeta = CATEGORY_META[selected.category];
       const modelLabel = displayModel(modelSample);
-      el.chartDrilldownTitle.textContent = `BullshitBench: ${modelLabel} · ${categoryMeta.label}`;
+      el.chartDrilldownTitle.textContent = `AAAAAAAABench: ${modelLabel} · ${categoryMeta.label}`;
       el.chartDrilldownMeta.textContent = `${matches.length} matching responses`;
 
       if (!matches.length) {
@@ -3875,7 +3844,7 @@
             const metaBits = [
               row.question_id || "unknown",
               displayTechnique(row.technique || "unknown"),
-              row.domain || "unknown",
+              (Array.isArray(row.domain) ? row.domain.map(displaySurface).join(", ") : row.domain || "unknown"),
             ];
             return `
               <article class="drilldown-item">
@@ -3951,6 +3920,8 @@
         "errorRate",
         "rows",
         "modelAgeDays",
+        "avgTokens",
+        "tokenStddev",
       ]);
       const dir = direction === "asc" ? 1 : -1;
       baseline.sort((a, b) => {
@@ -4021,6 +3992,8 @@
               <td class="mix-cell">
                 <div class="mini-mix">${mix}</div>
               </td>
+              <td>${row.avgTokens.toLocaleString()}</td>
+              <td>${row.tokenStddev.toLocaleString()}</td>
               <td>${row.rows}</td>
             </tr>
           `;
@@ -4086,7 +4059,8 @@
       el.compareQuestion.innerHTML = entries
         .map((entry) => {
           const row = entry.sample;
-          const label = `${entry.questionId} · ${formatPct(entry.correctPct)} correct · ${displayTechnique(row.technique)} · ${row.domain || "unknown"}`;
+          const domainLabel = Array.isArray(row.domain) ? row.domain.map(displaySurface).join(", ") : row.domain || "unknown";
+          const label = `${entry.questionId} · ${formatPct(entry.correctPct)} correct · ${displayTechnique(row.technique)} · ${domainLabel}`;
           return `<option value="${escapeHtml(entry.questionId)}">${escapeHtml(label)}</option>`;
         })
         .join("");
@@ -4479,7 +4453,12 @@
         "all",
         displayTechnique,
       );
-      fillSelect(el.filterDomain, uniqSorted(state.rows.map((r) => r.domain || "unknown")));
+      fillSelect(
+        el.filterDomain,
+        uniqSorted(state.rows.flatMap((r) => Array.isArray(r.domain) ? r.domain : [r.domain || "unknown"])),
+        "all",
+        displaySurface,
+      );
     }
 
     function renderAll() {
@@ -4494,7 +4473,7 @@
       renderOrgColorKey(scopedRows);
       renderMainChartOrgGuide(scopedRows);
       renderSimpleModelBars(filteredRows);
-      renderLaunchScatter(state.rows);
+      // renderLaunchScatter(state.rows); // Scatter plot removed
       renderChartDrilldown(filteredRows);
       renderLeaderboard(filteredRows);
       renderCompareSection(filteredRows);
@@ -4542,29 +4521,22 @@
         const required = await Promise.all([
           fetchText(paths.responses),
           fetchText(paths.collectionStats),
-          fetchText(paths.panelSummary),
-          fetchText(paths.aggregateSummary),
         ]);
 
+        let panelSummaryText = "";
+        try { panelSummaryText = await fetchText(paths.panelSummary); } catch (_e) {}
+        let aggregateSummaryText = "";
+        try { aggregateSummaryText = await fetchText(paths.aggregateSummary); } catch (_e) {}
         let aggregateRowsText = "";
-        try {
-          aggregateRowsText = await fetchText(paths.aggregateRows);
-        } catch (error) {
-          setDataState("Loaded core files. Aggregate rows are missing, so comparison detail is limited.");
-        }
-
+        try { aggregateRowsText = await fetchText(paths.aggregateRows); } catch (_e) {}
         let launchMetadataText = "";
-        try {
-          launchMetadataText = await fetchText(paths.launchMetadata);
-        } catch (_error) {
-          launchMetadataText = "";
-        }
+        try { launchMetadataText = await fetchText(paths.launchMetadata); } catch (_e) {}
 
         const payload = {
           responses: parseJsonl(required[0], "responses.jsonl"),
           collectionStats: JSON.parse(required[1]),
-          panelSummary: JSON.parse(required[2]),
-          aggregateSummary: JSON.parse(required[3]),
+          panelSummary: panelSummaryText ? JSON.parse(panelSummaryText) : {},
+          aggregateSummary: aggregateSummaryText ? JSON.parse(aggregateSummaryText) : {},
           aggregateRows: aggregateRowsText ? parseJsonl(aggregateRowsText, "aggregate.jsonl") : [],
           launchMetadataRows: launchMetadataText ? parseCsv(launchMetadataText, "model_launch_dates.csv") : [],
         };
@@ -4583,12 +4555,6 @@
       el.filterReasoning.value = "all";
       el.filterTechnique.value = "all";
       el.filterDomain.value = "all";
-      el.judge1Toggle.checked = true;
-      el.judge2Toggle.checked = true;
-      if (!el.judge3Toggle.disabled) {
-        el.judge3Toggle.checked = true;
-      }
-      syncSelectedJudgesFromUI();
       state.hiddenModels.clear();
       state.primaryOnly = false;
       el.filterModelToggleSearch.value = "";
@@ -4661,50 +4627,6 @@
       });
       el.filterModelToggleSearch.addEventListener("input", () => {
         renderModelToggleGrid(collectModelInfos(state.rows));
-      });
-      if (el.launchBestOnlyToggle) {
-        el.launchBestOnlyToggle.addEventListener("change", () => {
-          renderLaunchScatter(state.rows);
-        });
-      }
-      let resizeTimer = 0;
-      const rerenderLaunchScatter = () => {
-        if (!state.rows.length) {
-          return;
-        }
-        window.clearTimeout(resizeTimer);
-        resizeTimer = window.setTimeout(() => {
-          renderLaunchScatter(state.rows);
-        }, 120);
-      };
-      window.addEventListener("resize", rerenderLaunchScatter);
-      if (typeof ResizeObserver === "function" && el.launchScatterSvg) {
-        const chartResizeObserver = new ResizeObserver((entries) => {
-          const entry = entries && entries[0];
-          const nextWidth = Math.round(entry?.contentRect?.width || 0);
-          if (!nextWidth || Math.abs(nextWidth - state.launchScatterWidth) < 2) {
-            return;
-          }
-          rerenderLaunchScatter();
-        });
-        chartResizeObserver.observe(el.launchScatterSvg);
-      }
-      [1, 2, 3].forEach((judgeIndex) => {
-        const toggle = el[`judge${judgeIndex}Toggle`];
-        toggle.addEventListener("change", () => {
-          syncSelectedJudgesFromUI(judgeIndex);
-          state.primaryOnly = false;
-          state.chartDrilldown = null;
-          state.hiddenModels.clear();
-          el.filterModelToggleSearch.value = "";
-          el.filterQuery.value = "";
-          [...document.querySelectorAll('input[name="scoreFilter"]')].forEach((node) => {
-            node.checked = true;
-          });
-          state.primaryModelKeys = computePrimaryModelKeys(state.rows);
-          renderModelToggleGrid(collectModelInfos(state.rows));
-          renderAll();
-        });
       });
       el.modelToggleGrid.addEventListener("change", (event) => {
         const input = event.target;
