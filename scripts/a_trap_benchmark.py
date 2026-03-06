@@ -1597,10 +1597,11 @@ def run_collect(args: argparse.Namespace) -> int:
         )
         unexpected_checkpoint_ids = checkpoint_ids - task_ids
         if unexpected_checkpoint_ids:
-            raise RuntimeError(
-                "Collect resume checkpoint contains sample_id values that are not in the "
-                "current task set. This usually means config/model/prompt changes since "
-                f"the original run. sample={_sample_ids_summary(unexpected_checkpoint_ids)}"
+            # This is so that we can slowly add more models as we measure cost
+            print(
+                f"Resume: {len(unexpected_checkpoint_ids)} checkpoint responses not in "
+                f"current task set (models/prompts changed since original run). "
+                f"Keeping them in output. sample={_sample_ids_summary(unexpected_checkpoint_ids)}"
             )
         if checkpoint_records and checkpoint_source != partial_responses_path:
             write_jsonl(partial_responses_path, checkpoint_records)

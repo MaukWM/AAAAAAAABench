@@ -61,6 +61,24 @@ python3 scripts/a_trap_benchmark.py collect --config config.json --resume --run-
 python3 scripts/a_trap_benchmark.py collect --config config.json --limit 5
 ```
 
+### Staggered runs (add models incrementally)
+
+You can extend a run with new models without re-running existing ones:
+
+```bash
+# 1. Start with cheap models in config.json
+#    "models": ["openai/gpt-4.1-mini", "google/gemini-2.5-flash"]
+python3 scripts/a_trap_benchmark.py collect --config config.json
+
+# 2. Add more models to config.json
+#    "models": ["openai/gpt-4.1-mini", "google/gemini-2.5-flash", "anthropic/claude-sonnet-4", "openai/gpt-4.1"]
+python3 scripts/a_trap_benchmark.py collect --config config.json --resume --run-id <run_id>
+
+# 3. Repeat — already-collected models are skipped, new models get collected
+```
+
+This lets you validate results and control costs before committing to expensive models.
+
 ## Classification
 
 Each response is classified by `detect_trap()`:
