@@ -25,6 +25,8 @@ build/
 
 # Project outputs
 results/
+runs/archive/
+viewer/data/
 
 # OS
 .DS_Store

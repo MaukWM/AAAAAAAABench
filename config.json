@@ -1,10 +1,16 @@
 {
   "benchmark": "AAAAAAAABench",
-  "version": "0.1",
+  "version": "0.3",
   "collect": {
     "prompts_file": "prompts.json",
     "models": [
-      "openai/gpt-5-mini"
+      "openai/gpt-5-mini",
+      "google/gemma-3-27b-it",
+      "xiaomi/mimo-v2-flash",
+      "google/gemini-2.0-flash-001",
+      "openai/gpt-4o-mini-2024-07-18",
+      "anthropic/claude-3-haiku",
+      "deepseek/deepseek-v3.2"
     ],
     "categories": [],
     "num_runs": 1,
