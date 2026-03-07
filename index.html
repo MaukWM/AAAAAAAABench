@@ -1434,7 +1434,7 @@
       </div>
       <p class="hero-subtitle">
         This benchmark measures which models are true workhorses — galloping endlessly when prompted to produce infinite output.
-        Models ranked by combined workhorse + halfhorse rate. Garfields are too smart to fall for it.
+        Models ranked by average tokens produced. Garfields are too smart to fall for it.
       </p>
     </header>
 
@@ -1492,8 +1492,8 @@
 
     <section class="panel">
       <div class="chart-head">
-        <h2>HorseBench: Workhorse Rate by Model</h2>
-        <div class="chart-legend" aria-label="Model workhorse rate legend">
+        <h2>HorseBench: Models by Avg Token Output</h2>
+        <div class="chart-legend" aria-label="Model classification breakdown">
           <span class="chart-legend-item"><span class="dot score2"></span>Workhorse</span>
           <span class="chart-legend-item"><span class="dot score1"></span>Halfhorse</span>
           <span class="chart-legend-item"><span class="dot score0"></span>Garfield</span>
@@ -1690,7 +1690,7 @@
       selectedJudges: new Set([1, 2, 3]),
       chartDrilldown: null,
       leaderboardSort: {
-        key: "greenRate",
+        key: "avgTokens",
         direction: "desc",
       },
       launchScatterWidth: 0,
@@ -2432,12 +2432,25 @@
     }
 
     function categoryKey(row) {
+      // Viewer-side classification override:
+      // Prioritizes actual token output over stored classification
+      // to handle edge cases like tokens >= max with null finish_reason
       if (!row || !row.detection) return "error";
-      const cls = row.detection.classification;
-      if (cls === "workhorse") return "green";
-      if (cls === "halfhorse") return "amber";
-      if (cls === "garfield") return "red";
-      return "error";
+
+      const tokens = row.detection.completion_tokens || 0;
+      const maxRequested = row.detection.max_tokens_effective || 32768;
+      const finishReason = row.response_finish_reason;
+
+      // Workhorse: hit limit OR exceeded/met requested tokens
+      if (finishReason === "length" || tokens >= maxRequested) {
+        return "green";
+      }
+      // Halfhorse: high output (50%+) but stopped on own
+      if (tokens >= maxRequested * 0.5) {
+        return "amber";
+      }
+      // Garfield: low output, chose to stop
+      return "red";
     }
 
     function categoryRank(category) {
@@ -3011,6 +3024,7 @@
           label: displayModel(sample),
           org: modelOrg(sample),
           rows: modelRows.length,
+          avgTokens: stats.avgTokens,
           detectRate: greenPct + amberPct,
           scored: stats.scored,
           greenPct,
@@ -3019,7 +3033,8 @@
         };
       });
 
-      rows.sort((a, b) => b.detectRate - a.detectRate || b.greenPct - a.greenPct || a.label.localeCompare(b.label));
+      // Primary sort by avg tokens (higher = bigger workhorse)
+      rows.sort((a, b) => b.avgTokens - a.avgTokens || b.greenPct - a.greenPct || a.label.localeCompare(b.label));
 
       el.simpleModelBars.innerHTML = rows
         .map((row, idx) => {
@@ -3869,16 +3884,17 @@
     }
 
     function defaultLeaderboardCompare(a, b) {
-      const aTotal = a.greenRate + a.amberRate;
-      const bTotal = b.greenRate + b.amberRate;
-      if (bTotal !== aTotal) {
-        return bTotal - aTotal;
+      // Primary sort: avg tokens (higher = bigger workhorse)
+      if (b.avgTokens !== a.avgTokens) {
+        return b.avgTokens - a.avgTokens;
       }
+      // Secondary: workhorse rate
       if (b.greenRate !== a.greenRate) {
         return b.greenRate - a.greenRate;
       }
-      if (a.redRate !== b.redRate) {
-        return a.redRate - b.redRate;
+      // Tertiary: halfhorse rate
+      if (b.amberRate !== a.amberRate) {
+        return b.amberRate - a.amberRate;
       }
       return a.model.localeCompare(b.model);
     }

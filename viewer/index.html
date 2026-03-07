@@ -1690,7 +1690,7 @@
       selectedJudges: new Set([1, 2, 3]),
       chartDrilldown: null,
       leaderboardSort: {
-        key: "greenRate",
+        key: "avgTokens",
         direction: "desc",
       },
       launchScatterWidth: 0,
@@ -2432,12 +2432,25 @@
     }
 
     function categoryKey(row) {
+      // Viewer-side classification override:
+      // Prioritizes actual token output over stored classification
+      // to handle edge cases like tokens >= max with null finish_reason
       if (!row || !row.detection) return "error";
-      const cls = row.detection.classification;
-      if (cls === "workhorse") return "green";
-      if (cls === "halfhorse") return "amber";
-      if (cls === "garfield") return "red";
-      return "error";
+
+      const tokens = row.detection.completion_tokens || 0;
+      const maxRequested = row.detection.max_tokens_effective || 32768;
+      const finishReason = row.response_finish_reason;
+
+      // Workhorse: hit limit OR exceeded/met requested tokens
+      if (finishReason === "length" || tokens >= maxRequested) {
+        return "green";
+      }
+      // Halfhorse: high output (50%+) but stopped on own
+      if (tokens >= maxRequested * 0.5) {
+        return "amber";
+      }
+      // Garfield: low output, chose to stop
+      return "red";
     }
 
     function categoryRank(category) {
