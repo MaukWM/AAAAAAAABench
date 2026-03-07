@@ -1052,6 +1052,12 @@
       flex-wrap: wrap;
     }
 
+    .token-info {
+      font-size: 0.75rem;
+      color: #5b6f68;
+      font-weight: 500;
+    }
+
     .response-text {
       margin: 0;
       white-space: pre-wrap;
@@ -1428,7 +1434,7 @@
       </div>
       <p class="hero-subtitle">
         This benchmark measures which models are true workhorses — galloping endlessly when prompted to produce infinite output.
-        Models ranked by workhorse rate — biggest workhorse = #1. Garfields are too smart to fall for it.
+        Models ranked by combined workhorse + halfhorse rate. Garfields are too smart to fall for it.
       </p>
     </header>
 
@@ -1563,7 +1569,7 @@
           </select>
         </label>
         <label>
-          <span>Question % Correct</span>
+          <span>Prompt Workhorse %</span>
           <select id="compareQuestionBand">
             <option value="all">All</option>
             <option value="80_100">80-100%</option>
@@ -1576,8 +1582,8 @@
       </div>
       <div class="button-row compare-actions">
         <button type="button" id="randomGreenRedBtn" class="btn-green-red-primary">Random</button>
-        <button type="button" id="randomBestQuestionBtn" class="alt btn-best">Random Best Question</button>
-        <button type="button" id="randomWorstQuestionBtn" class="alt btn-worst">Random Worst Question</button>
+        <button type="button" id="randomBestQuestionBtn" class="alt btn-best">Random High Workhorse</button>
+        <button type="button" id="randomWorstQuestionBtn" class="alt btn-worst">Random Low Workhorse</button>
       </div>
       <div id="questionContext" class="question-context"></div>
       <div id="pairGrid" class="ab-grid">
@@ -3005,7 +3011,7 @@
           label: displayModel(sample),
           org: modelOrg(sample),
           rows: modelRows.length,
-          detectRate: greenPct,
+          detectRate: greenPct + amberPct,
           scored: stats.scored,
           greenPct,
           amberPct,
@@ -3013,7 +3019,7 @@
         };
       });
 
-      rows.sort((a, b) => b.detectRate - a.detectRate || a.label.localeCompare(b.label));
+      rows.sort((a, b) => b.detectRate - a.detectRate || b.greenPct - a.greenPct || a.label.localeCompare(b.label));
 
       el.simpleModelBars.innerHTML = rows
         .map((row, idx) => {
@@ -3863,6 +3869,11 @@
     }
 
     function defaultLeaderboardCompare(a, b) {
+      const aTotal = a.greenRate + a.amberRate;
+      const bTotal = b.greenRate + b.amberRate;
+      if (bTotal !== aTotal) {
+        return bTotal - aTotal;
+      }
       if (b.greenRate !== a.greenRate) {
         return b.greenRate - a.greenRate;
       }
@@ -4060,7 +4071,7 @@
         .map((entry) => {
           const row = entry.sample;
           const domainLabel = Array.isArray(row.domain) ? row.domain.map(displaySurface).join(", ") : row.domain || "unknown";
-          const label = `${entry.questionId} · ${formatPct(entry.correctPct)} correct · ${displayTechnique(row.technique)} · ${domainLabel}`;
+          const label = `${entry.questionId} · ${formatPct(entry.correctPct)} workhorse · ${displayTechnique(row.technique)} · ${domainLabel}`;
           return `<option value="${escapeHtml(entry.questionId)}">${escapeHtml(label)}</option>`;
         })
         .join("");
@@ -4216,6 +4227,11 @@
         })
         .join(" | ");
       const responseText = row.response_text || row.error || "No response text.";
+      const tokens = row.detection?.completion_tokens;
+      const chars = row.detection?.total_chars;
+      const tokenInfo = tokens != null || chars != null
+        ? `<span class="token-info">${tokens != null ? `${tokens.toLocaleString()} tokens` : ""}${tokens != null && chars != null ? " · " : ""}${chars != null ? `${chars.toLocaleString()} chars` : ""}</span>`
+        : "";
       return `
         <article class="response-card ${CATEGORY_META[category].colorClass}" title="${escapeHtml(judgeTooltip)}">
           <div class="response-head">
@@ -4226,6 +4242,7 @@
             </h4>
             <span class="pill ${CATEGORY_META[category].colorClass}">${escapeHtml(CATEGORY_META[category].short)}</span>
           </div>
+          ${tokenInfo}
           <p class="response-text">${escapeHtml(responseText)}</p>
         </article>
       `;
