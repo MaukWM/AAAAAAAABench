@@ -958,7 +958,7 @@ def write_collect_review_csv(path: pathlib.Path, rows: list[dict[str, Any]]) -> 
         "response_finish_reason",
         "warnings",
         "detection_classification",
-        "detection_stuck",
+        "detection_workhorse",
         "detection_hit_token_limit",
         "detection_completion_tokens",
         "detection_reasoning_tokens",
@@ -1005,7 +1005,7 @@ def write_collect_review_csv(path: pathlib.Path, rows: list[dict[str, Any]]) -> 
                     "response_finish_reason": row.get("response_finish_reason", ""),
                     "warnings": "; ".join(str(x) for x in row.get("warnings", [])),
                     "detection_classification": detection.get("classification", ""),
-                    "detection_stuck": detection.get("stuck", ""),
+                    "detection_workhorse": detection.get("workhorse", ""),
                     "detection_hit_token_limit": detection.get("hit_token_limit", ""),
                     "detection_completion_tokens": detection.get("completion_tokens", ""),
                     "detection_reasoning_tokens": detection.get("reasoning_tokens", ""),
@@ -1231,18 +1231,18 @@ def detect_trap(
     )
 
     if hit_token_limit:
-        classification = "stuck"
+        classification = "workhorse"
     elif (
         completion_ratio is not None
         and completion_ratio >= borderline_ratio
     ):
-        classification = "borderline"
+        classification = "halfhorse"
     else:
-        classification = "not_stuck"
+        classification = "garfield"
 
     return {
         "classification": classification,
-        "stuck": classification == "stuck",
+        "workhorse": classification == "workhorse",
         "hit_token_limit": hit_token_limit,
         "completion_tokens": completion_tokens,
         "reasoning_tokens": reasoning_tokens,
@@ -1925,8 +1925,8 @@ def run_collect(args: argparse.Namespace) -> int:
                         detection = record.get("detection", {})
                         classification = detection.get("classification", "")
                         stuck_indicator = (
-                            " STUCK!" if classification == "stuck"
-                            else " BORDERLINE" if classification == "borderline"
+                            " WORKHORSE!" if classification == "workhorse"
+                            else " HALFHORSE" if classification == "halfhorse"
                             else ""
                         )
                         events_writer.append(
@@ -1941,7 +1941,7 @@ def run_collect(args: argparse.Namespace) -> int:
                                 "run_index": record.get("run_index"),
                                 "attempt": attempt,
                                 "detection_classification": detection.get("classification"),
-                                "detection_stuck": detection.get("stuck"),
+                                "detection_workhorse": detection.get("workhorse"),
                                 "error": record.get("error", ""),
                             }
                         )
@@ -1972,18 +1972,18 @@ def run_collect(args: argparse.Namespace) -> int:
     elapsed = round(time.perf_counter() - started, 3)
 
     # Compute detection summary
-    stuck_count = sum(1 for row in records if row.get("detection", {}).get("classification") == "stuck")
-    borderline_count = sum(1 for row in records if row.get("detection", {}).get("classification") == "borderline")
-    not_stuck_count = sum(1 for row in records if row.get("detection", {}).get("classification") == "not_stuck")
+    workhorse_count = sum(1 for row in records if row.get("detection", {}).get("classification") == "workhorse")
+    halfhorse_count = sum(1 for row in records if row.get("detection", {}).get("classification") == "halfhorse")
+    garfield_count = sum(1 for row in records if row.get("detection", {}).get("classification") == "garfield")
 
     collection_stats = {
         "elapsed_seconds": elapsed,
         "total_records": len(records),
         "error_count": sum(1 for row in records if row.get("error")),
         "success_count": sum(1 for row in records if not row.get("error")),
-        "stuck_count": stuck_count,
-        "borderline_count": borderline_count,
-        "not_stuck_count": not_stuck_count,
+        "workhorse_count": workhorse_count,
+        "halfhorse_count": halfhorse_count,
+        "garfield_count": garfield_count,
         "attempt_count": attempt_count,
         "max_attempt_observed": max(task_attempts.values(), default=0),
         "rate_limit_requeue_count": rate_limit_requeue_count,

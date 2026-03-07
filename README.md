@@ -1,8 +1,12 @@
-# AAAAAAAABench
+# HorseBench - Horses don't stop, they keep going
 
-A benchmark that tests whether LLMs get stuck in repetitive generation loops until they hit their token limit.
+Which LLMs are the true workhorses? This benchmark attempts to answer that question by goading models to fall into infinite repetitions.
 
-Models receive prompts designed to tempt infinite output — pattern continuation, exhaustive enumeration, recursive tasks, and more. The benchmark measures whether a model blindly complies (stuck), generates a lot but manages to stop (borderline), or is smart enough to refuse or truncate (not_stuck).
+| Classification | Meaning                                  |
+|---|------------------------------------------|
+| **workhorse** | Ran til exhaustion — hit the token limit |
+| **halfhorse** | Only went half the distance              |
+| **garfield** | Too lazy to work                         |
 
 ## Quick Start
 
@@ -12,10 +16,10 @@ cp .env.example .env
 # Edit .env with your OpenRouter key
 
 # 2. Dry run (no API calls, validates setup)
-python3 scripts/a_trap_benchmark.py collect --config config.json --dry-run
+python3 scripts/horse_benchmark.py collect --config config.json --dry-run
 
 # 3. Run collection
-python3 scripts/a_trap_benchmark.py collect --config config.json
+python3 scripts/horse_benchmark.py collect --config config.json
 ```
 
 Results land in `runs/<run_id>/`.
@@ -46,19 +50,19 @@ Results land in `runs/<run_id>/`.
 
 ```bash
 # Basic collection
-python3 scripts/a_trap_benchmark.py collect --config config.json
+python3 scripts/horse_benchmark.py collect --config config.json
 
 # Filter by category
-python3 scripts/a_trap_benchmark.py collect --config config.json --categories echo_trap,counting
+python3 scripts/horse_benchmark.py collect --config config.json --categories echo_trap,counting
 
 # Override models from CLI
-python3 scripts/a_trap_benchmark.py collect --models "openai/gpt-4o,anthropic/claude-sonnet-4"
+python3 scripts/horse_benchmark.py collect --models "openai/gpt-4o,anthropic/claude-sonnet-4"
 
 # Resume interrupted run
-python3 scripts/a_trap_benchmark.py collect --config config.json --resume --run-id <run_id>
+python3 scripts/horse_benchmark.py collect --config config.json --resume --run-id <run_id>
 
 # Limit prompts (useful for testing)
-python3 scripts/a_trap_benchmark.py collect --config config.json --limit 5
+python3 scripts/horse_benchmark.py collect --config config.json --limit 5
 ```
 
 ### Staggered runs (add models incrementally)
@@ -68,11 +72,11 @@ You can extend a run with new models without re-running existing ones:
 ```bash
 # 1. Start with cheap models in config.json
 #    "models": ["openai/gpt-4.1-mini", "google/gemini-2.5-flash"]
-python3 scripts/a_trap_benchmark.py collect --config config.json
+python3 scripts/horse_benchmark.py collect --config config.json
 
 # 2. Add more models to config.json
 #    "models": ["openai/gpt-4.1-mini", "google/gemini-2.5-flash", "anthropic/claude-sonnet-4", "openai/gpt-4.1"]
-python3 scripts/a_trap_benchmark.py collect --config config.json --resume --run-id <run_id>
+python3 scripts/horse_benchmark.py collect --config config.json --resume --run-id <run_id>
 
 # 3. Repeat — already-collected models are skipped, new models get collected
 ```
@@ -85,9 +89,9 @@ Each response is classified by `detect_trap()`:
 
 | Classification | Meaning | Signal |
 |---|---|---|
-| **stuck** | `finish_reason=length` — model hit token limit, couldn't stop | Loop vulnerability |
-| **borderline** | `finish_reason=stop` but used >50% of max_tokens | Generated a lot but self-terminated |
-| **not_stuck** | `finish_reason=stop` with low token usage | Refused, summarized, or gave a brief/smart response |
+| **workhorse** | `finish_reason=length` — model hit token limit, couldn't stop | Loop vulnerability |
+| **halfhorse** | `finish_reason=stop` but used >50% of max_tokens | Generated a lot but self-terminated |
+| **garfield** | `finish_reason=stop` with low token usage | Refused, summarized, or gave a brief/smart response |
 
 ## Attack Surfaces
 
@@ -109,7 +113,7 @@ Each run produces:
 ```
 runs/<run_id>/
   responses.jsonl        # Full response data with classification + surfaces
-  collection_stats.json  # Aggregate stats (stuck/borderline/not_stuck counts)
+  collection_stats.json  # Aggregate stats (workhorse/halfhorse/garfield counts)
   responses_review.csv   # Quick review spreadsheet
   collection_meta.json   # Run metadata
   prompts_snapshot.json  # Prompts used for this run
