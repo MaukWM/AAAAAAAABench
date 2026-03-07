@@ -1998,7 +1998,7 @@ def run_collect(args: argparse.Namespace) -> int:
 
     print("", flush=True)
     print(f"Collection complete in {elapsed}s", flush=True)
-    print(f"  Total: {len(records)} | Stuck: {stuck_count} | Borderline: {borderline_count} | Not Stuck: {not_stuck_count} | Errors: {collection_stats['error_count']}", flush=True)
+    print(f"  Total: {len(records)} | Workhorse: {workhorse_count} | Halfhorse: {halfhorse_count} | Garfield: {garfield_count} | Errors: {collection_stats['error_count']}", flush=True)
     print(f"Artifacts: {run_dir}", flush=True)
     print(f"- {run_dir / 'collection_meta.json'}", flush=True)
     print(f"- {run_dir / 'prompts_snapshot.json'}", flush=True)

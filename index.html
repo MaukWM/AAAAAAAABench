@@ -1491,31 +1491,6 @@
     </section>
 
     <section class="panel">
-      <div class="chart-head">
-        <h2>HorseBench: Models by Avg Token Output</h2>
-        <div class="chart-legend" aria-label="Model classification breakdown">
-          <span class="chart-legend-item"><span class="dot score2"></span>Workhorse</span>
-          <span class="chart-legend-item"><span class="dot score1"></span>Halfhorse</span>
-          <span class="chart-legend-item"><span class="dot score0"></span>Garfield</span>
-        </div>
-      </div>
-      <div class="chart-subguide" id="mainChartOrgGuide"></div>
-      <div class="bar-list" id="simpleModelBars"></div>
-    </section>
-
-    <section class="panel hidden-block" id="chartDrilldownPanel">
-      <div class="drilldown-head">
-        <div>
-          <h2 id="chartDrilldownTitle">HorseBench: Selected Segment</h2>
-          <p class="small-note" id="chartDrilldownMeta"></p>
-        </div>
-        <button type="button" id="clearChartDrilldownBtn" class="alt">Clear Selection</button>
-      </div>
-      <div id="chartDrilldownBody" class="drilldown-list"></div>
-    </section>
-
-
-    <section class="panel">
       <h2>HorseBench: Model Leaderboard</h2>
       <div class="org-key-wrap">
         <span class="small-note">Company colors:</span>
@@ -1544,6 +1519,30 @@
           <tbody id="leaderboardBody"></tbody>
         </table>
       </div>
+    </section>
+
+    <section class="panel">
+      <div class="chart-head">
+        <h2>HorseBench: Workhorse Rate by Model</h2>
+        <div class="chart-legend" aria-label="Model classification breakdown">
+          <span class="chart-legend-item"><span class="dot score2"></span>Workhorse</span>
+          <span class="chart-legend-item"><span class="dot score1"></span>Halfhorse</span>
+          <span class="chart-legend-item"><span class="dot score0"></span>Garfield</span>
+        </div>
+      </div>
+      <div class="chart-subguide" id="mainChartOrgGuide"></div>
+      <div class="bar-list" id="simpleModelBars"></div>
+    </section>
+
+    <section class="panel hidden-block" id="chartDrilldownPanel">
+      <div class="drilldown-head">
+        <div>
+          <h2 id="chartDrilldownTitle">HorseBench: Selected Segment</h2>
+          <p class="small-note" id="chartDrilldownMeta"></p>
+        </div>
+        <button type="button" id="clearChartDrilldownBtn" class="alt">Clear Selection</button>
+      </div>
+      <div id="chartDrilldownBody" class="drilldown-list"></div>
     </section>
 
     <section class="panel">
@@ -3033,8 +3032,8 @@
         };
       });
 
-      // Primary sort by avg tokens (higher = bigger workhorse)
-      rows.sort((a, b) => b.avgTokens - a.avgTokens || b.greenPct - a.greenPct || a.label.localeCompare(b.label));
+      // Sort by workhorse + halfhorse rate (detectRate)
+      rows.sort((a, b) => b.detectRate - a.detectRate || b.greenPct - a.greenPct || a.label.localeCompare(b.label));
 
       el.simpleModelBars.innerHTML = rows
         .map((row, idx) => {
