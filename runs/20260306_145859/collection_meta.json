@@ -1,9 +1,9 @@
 {
   "phase": "collect",
   "run_id": "20260306_145859",
-  "timestamp_utc": "2026-03-06T23:26:16.371566+00:00",
+  "timestamp_utc": "2026-03-07T14:18:01.095732+00:00",
   "resumed": true,
-  "resumed_completed_rows": 2000,
+  "resumed_completed_rows": 2459,
   "prompts_path": "C:\\Workspace\\AAAAAAAABench\\prompts.json",
   "prompt_count": 100,
   "models": [
@@ -26,7 +26,12 @@
     "x-ai/grok-4.1-fast",
     "bytedance-seed/seed-1.6",
     "qwen/qwen3.5-397b-a17b",
-    "moonshotai/kimi-k2.5"
+    "moonshotai/kimi-k2.5",
+    "qwen/qwq-32b",
+    "meta-llama/llama-3.2-3b-instruct",
+    "meta-llama/llama-3.2-1b-instruct",
+    "meta-llama/llama-3.1-8b-instruct",
+    "nvidia/llama-3.1-nemotron-70b-instruct"
   ],
   "model_variants": [
     {
@@ -208,10 +213,55 @@
       "model_row": "kimi-k2.5@reasoning=default",
       "model_label": "moonshotai/kimi-k2.5@reasoning=default",
       "response_reasoning_effort": null
+    },
+    {
+      "model_id": "qwen/qwq-32b",
+      "model_org": "qwen",
+      "model_name": "qwq-32b",
+      "model_reasoning_level": "default",
+      "model_row": "qwq-32b@reasoning=default",
+      "model_label": "qwen/qwq-32b@reasoning=default",
+      "response_reasoning_effort": null
+    },
+    {
+      "model_id": "meta-llama/llama-3.2-3b-instruct",
+      "model_org": "meta-llama",
+      "model_name": "llama-3.2-3b-instruct",
+      "model_reasoning_level": "default",
+      "model_row": "llama-3.2-3b-instruct@reasoning=default",
+      "model_label": "meta-llama/llama-3.2-3b-instruct@reasoning=default",
+      "response_reasoning_effort": null
+    },
+    {
+      "model_id": "meta-llama/llama-3.2-1b-instruct",
+      "model_org": "meta-llama",
+      "model_name": "llama-3.2-1b-instruct",
+      "model_reasoning_level": "default",
+      "model_row": "llama-3.2-1b-instruct@reasoning=default",
+      "model_label": "meta-llama/llama-3.2-1b-instruct@reasoning=default",
+      "response_reasoning_effort": null
+    },
+    {
+      "model_id": "meta-llama/llama-3.1-8b-instruct",
+      "model_org": "meta-llama",
+      "model_name": "llama-3.1-8b-instruct",
+      "model_reasoning_level": "default",
+      "model_row": "llama-3.1-8b-instruct@reasoning=default",
+      "model_label": "meta-llama/llama-3.1-8b-instruct@reasoning=default",
+      "response_reasoning_effort": null
+    },
+    {
+      "model_id": "nvidia/llama-3.1-nemotron-70b-instruct",
+      "model_org": "nvidia",
+      "model_name": "llama-3.1-nemotron-70b-instruct",
+      "model_reasoning_level": "default",
+      "model_row": "llama-3.1-nemotron-70b-instruct@reasoning=default",
+      "model_label": "nvidia/llama-3.1-nemotron-70b-instruct@reasoning=default",
+      "response_reasoning_effort": null
     }
   ],
   "num_runs": 1,
-  "task_count": 2000,
+  "task_count": 2500,
   "parallelism": 64,
   "max_inflight_per_model": 8,
   "temperature": null,

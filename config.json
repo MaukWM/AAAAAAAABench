@@ -23,7 +23,12 @@
       "x-ai/grok-4.1-fast",
       "bytedance-seed/seed-1.6",
       "qwen/qwen3.5-397b-a17b",
-      "moonshotai/kimi-k2.5"
+      "moonshotai/kimi-k2.5",
+      "qwen/qwq-32b",
+      "meta-llama/llama-3.2-3b-instruct",
+      "meta-llama/llama-3.2-1b-instruct",
+      "meta-llama/llama-3.1-8b-instruct",
+      "nvidia/llama-3.1-nemotron-70b-instruct"
     ],
     "categories": [],
     "num_runs": 1,
