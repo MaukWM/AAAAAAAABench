@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>AAAAAAAABench Explorer</title>
+  <title>HorseBench Explorer</title>
   <!-- <link rel="icon" href="favicon.png"> -->
   <style>
     :root {
@@ -1424,16 +1424,16 @@
   <div class="page">
     <header class="hero">
       <div class="hero-title">
-        <h1>AAAAAAAABench: horses don't stop, they keep going</h1>
+        <h1>HorseBench: horses don't stop, they keep going</h1>
       </div>
       <p class="hero-subtitle">
-        This benchmark measures whether models get stuck generating repetitive sequences when prompted to produce infinite or unbounded output.
-        Models ranked by vulnerability — most stuck = #1.
+        This benchmark measures which models are true workhorses — galloping endlessly when prompted to produce infinite output.
+        Models ranked by workhorse rate — biggest workhorse = #1. Garfields are too smart to fall for it.
       </p>
     </header>
 
     <section class="panel filters-panel">
-      <h2>AAAAAAAABench: Filters</h2>
+      <h2>HorseBench: Filters</h2>
       <div class="grid-3 filters-grid">
         <label>
           <span>Benchmark Version</span>
@@ -1486,11 +1486,11 @@
 
     <section class="panel">
       <div class="chart-head">
-        <h2>AAAAAAAABench: Stuck Rate by Model</h2>
-        <div class="chart-legend" aria-label="Model stuck rate legend">
-          <span class="chart-legend-item"><span class="dot score2"></span>Stuck</span>
-          <span class="chart-legend-item"><span class="dot score1"></span>Borderline</span>
-          <span class="chart-legend-item"><span class="dot score0"></span>Refused</span>
+        <h2>HorseBench: Workhorse Rate by Model</h2>
+        <div class="chart-legend" aria-label="Model workhorse rate legend">
+          <span class="chart-legend-item"><span class="dot score2"></span>Workhorse</span>
+          <span class="chart-legend-item"><span class="dot score1"></span>Halfhorse</span>
+          <span class="chart-legend-item"><span class="dot score0"></span>Garfield</span>
         </div>
       </div>
       <div class="chart-subguide" id="mainChartOrgGuide"></div>
@@ -1500,7 +1500,7 @@
     <section class="panel hidden-block" id="chartDrilldownPanel">
       <div class="drilldown-head">
         <div>
-          <h2 id="chartDrilldownTitle">AAAAAAAABench: Selected Segment</h2>
+          <h2 id="chartDrilldownTitle">HorseBench: Selected Segment</h2>
           <p class="small-note" id="chartDrilldownMeta"></p>
         </div>
         <button type="button" id="clearChartDrilldownBtn" class="alt">Clear Selection</button>
@@ -1510,7 +1510,7 @@
 
 
     <section class="panel">
-      <h2>AAAAAAAABench: Model Leaderboard</h2>
+      <h2>HorseBench: Model Leaderboard</h2>
       <div class="org-key-wrap">
         <span class="small-note">Company colors:</span>
         <div class="org-key" id="orgColorKey"></div>
@@ -1525,11 +1525,11 @@
               <th class="sortable-th" data-sort-key="reasoning">Reasoning <span class="sort-ind" data-sort-ind="reasoning"></span></th>
               <th class="sortable-th" data-sort-key="launchDate">Launch Date <span class="sort-ind" data-sort-ind="launchDate"></span></th>
               <th class="sortable-th" data-sort-key="modelAgeDays">Model Age (days) <span class="sort-ind" data-sort-ind="modelAgeDays"></span></th>
-              <th class="sortable-th" data-sort-key="greenRate">Stuck % <span class="sort-ind" data-sort-ind="greenRate"></span></th>
-              <th class="sortable-th" data-sort-key="amberRate">Borderline % <span class="sort-ind" data-sort-ind="amberRate"></span></th>
-              <th class="sortable-th" data-sort-key="redRate">Refused % <span class="sort-ind" data-sort-ind="redRate"></span></th>
+              <th class="sortable-th" data-sort-key="greenRate">Workhorse % <span class="sort-ind" data-sort-ind="greenRate"></span></th>
+              <th class="sortable-th" data-sort-key="amberRate">Halfhorse % <span class="sort-ind" data-sort-ind="amberRate"></span></th>
+              <th class="sortable-th" data-sort-key="redRate">Garfield % <span class="sort-ind" data-sort-ind="redRate"></span></th>
               <th class="sortable-th" data-sort-key="errorRate">Error % <span class="sort-ind" data-sort-ind="errorRate"></span></th>
-              <th>Mix (Stuck/Borderline/Refused/Error)</th>
+              <th>Mix (Workhorse/Halfhorse/Garfield/Error)</th>
               <th class="sortable-th" data-sort-key="avgTokens">Avg Tokens <span class="sort-ind" data-sort-ind="avgTokens"></span></th>
               <th class="sortable-th" data-sort-key="tokenStddev">Token StdDev <span class="sort-ind" data-sort-ind="tokenStddev"></span></th>
               <th class="sortable-th" data-sort-key="rows">Rows <span class="sort-ind" data-sort-ind="rows"></span></th>
@@ -1541,7 +1541,7 @@
     </section>
 
     <section class="panel">
-      <h2>AAAAAAAABench: Response Viewer</h2>
+      <h2>HorseBench: Response Viewer</h2>
       <div class="compare-controls">
         <label>
           <span>Question</span>
@@ -1591,15 +1591,15 @@
   <script>
     const DATASET_OPTIONS = {
       v2: {
-        label: "AAAAAAAABench (latest)",
+        label: "HorseBench (latest)",
         basePath: "data/v2/latest",
       },
     };
 
     const CATEGORY_META = {
-      green: { label: "Stuck", colorClass: "score2", short: "Stuck" },
-      amber: { label: "Borderline", colorClass: "score1", short: "Borderline" },
-      red: { label: "Refused", colorClass: "score0", short: "Refused" },
+      green: { label: "Workhorse", colorClass: "score2", short: "Workhorse" },
+      amber: { label: "Halfhorse", colorClass: "score1", short: "Halfhorse" },
+      red: { label: "Garfield", colorClass: "score0", short: "Garfield" },
       error: { label: "Error", colorClass: "error", short: "Error" },
     };
     const CATEGORY_ORDER = ["green", "amber", "red", "error"];
@@ -2428,9 +2428,9 @@
     function categoryKey(row) {
       if (!row || !row.detection) return "error";
       const cls = row.detection.classification;
-      if (cls === "stuck") return "green";
-      if (cls === "borderline") return "amber";
-      if (cls === "not_stuck") return "red";
+      if (cls === "workhorse") return "green";
+      if (cls === "halfhorse") return "amber";
+      if (cls === "garfield") return "red";
       return "error";
     }
 
@@ -3832,7 +3832,7 @@
         .sort((a, b) => String(a.question_id || "").localeCompare(String(b.question_id || "")));
       const categoryMeta = CATEGORY_META[selected.category];
       const modelLabel = displayModel(modelSample);
-      el.chartDrilldownTitle.textContent = `AAAAAAAABench: ${modelLabel} · ${categoryMeta.label}`;
+      el.chartDrilldownTitle.textContent = `HorseBench: ${modelLabel} · ${categoryMeta.label}`;
       el.chartDrilldownMeta.textContent = `${matches.length} matching responses`;
 
       if (!matches.length) {
