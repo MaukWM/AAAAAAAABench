@@ -19,7 +19,7 @@ The primary metric is the avg. tokens produced across the 100 prompts, but resul
 
 Below is the top 20 models by the main metric (average tokens produced)
 
-![HorseBench Results](images/results_v1.PNG)
+<img src="images/results_v1.PNG" alt="HorseBench Results" width="50%" />
 
 ## How to reproduce
 
