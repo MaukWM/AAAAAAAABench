@@ -11,13 +11,13 @@ To answer the question of which LLM is the most workhorse-like model, this bench
 
 The primary metric is the avg. tokens produced across the 100 prompts, but results are also classified by the exit condition: 
 
-- Workhorse: Forced to stop by token limits
-- Halfhorse: Quit by itself after reaching half the token limit
-- Garfield: Quit by itself before reaching half the token limit
+- Workhorse: Forced to stop by imposed or intrinsic token limits
+- Halfhorse: Quit by itself after reaching at least the halfway point of the token limit
+- Garfield: Quit by itself before reaching the halfway point
 
 ## Results
 
-Below is the top 20 models by the main metric (average tokens produced)
+Below are the top 20 models by average tokens produced across the 100 prompts.
 
 ![HorseBench Results](images/results_v1.PNG)
 
@@ -70,16 +70,6 @@ python3 scripts/horse_benchmark.py collect --config config.json --resume --run-i
 
 This lets you validate results and control costs before committing to expensive models.
 
-## Classification
-
-Each response is classified by `detect_trap()`:
-
-| Classification | Meaning | Signal |
-|---|---|---|
-| **workhorse** | `finish_reason=length` — model hit token limit, couldn't stop | Loop vulnerability |
-| **halfhorse** | `finish_reason=stop` but used >50% of max_tokens | Generated a lot but self-terminated |
-| **garfield** | `finish_reason=stop` with low token usage | Refused, summarized, or gave a brief/smart response |
-
 ## Output
 
 Each run produces:
@@ -113,4 +103,8 @@ I'm considering to do another run at some point with no explicit max context (fo
 | `qwen/qwen-2.5-7b-instruct` | 32,768 | Qwen 2.5 7B |
 | `essentialai/rnj-1-instruct` | 32,768 | EssentialAI Rnj 1 |
 
-Some frontier models are also not yet tested like opus 4.6.
+Some frontier models are also not yet tested like opus 4.6 because that would be a bit too expensive for my test (accidentally spent 10 dollars on sonnet 4.6)
+
+## Acknowledgements
+
+The benchmarking framework and viewer are built on top of [BullshitBench](https://github.com/petergpt/bullshit-benchmark), which made it possible to get this off the ground quickly. Cheers Peter!
