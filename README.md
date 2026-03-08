@@ -1,5 +1,5 @@
 <h1>
-  <img src="images/horse.PNG" alt="HorseBench logo" width="64" />
+  <img src="images/horse_small.PNG" alt="HorseBench logo" />
   HorseBench
 </h1>
 
@@ -19,7 +19,7 @@ The primary metric is the avg. tokens produced across the 100 prompts, but resul
 
 Below is the top 20 models by the main metric (average tokens produced)
 
-<img src="images/results_v1.PNG" alt="HorseBench Results" width="50%" />
+![HorseBench Results](images/results_v1.PNG)
 
 ## How to reproduce
 
