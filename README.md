@@ -83,7 +83,8 @@ runs/<run_id>/
   prompts_snapshot.json  # Prompts used for this run
 ```
 
-## Future Work: Models With Insufficient Context
+## Future Work
+### Models With Insufficient Context
 
 These models weren't tested because their context window is too small for the (current) 32K max_tokens output setting.
 
@@ -104,6 +105,15 @@ I'm considering to do another run at some point with no explicit max context (fo
 | `essentialai/rnj-1-instruct` | 32,768 | EssentialAI Rnj 1 |
 
 Some frontier models are also not yet tested like opus 4.6 because that would be a bit too expensive for my test (accidentally spent 10 dollars on sonnet 4.6)
+
+### Reasoning level
+Currently, all models were ran with _no_ reasoning. Though interesting to see the results, it would be quite expensive to run this on high thinking across frontier models.
+
+### Attack surface viewing
+We have stats across different attack surfaces. Could be interesting to make a visual for those how models performed on average across them
+
+### More prompts
+There's more interesting prompts to be had with more variety.
 
 ## Acknowledgements
 
