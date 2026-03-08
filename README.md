@@ -1,21 +1,24 @@
-# HorseBench - Horses don't stop, they keep going
+# HorseBench
 
-Which LLMs are the true workhorses? This benchmark attempts to answer that question by goading models to fall into infinite repetitions.
+Horses don't stop, they keep going.
 
-| Classification | Meaning                                  |
-|---|------------------------------------------|
-| **workhorse** | Ran til exhaustion — hit the token limit |
-| **halfhorse** | Only went half the distance              |
-| **garfield** | Too lazy to work                         |
+View the results here: https://horsebench.maukwm.com/
 
-## Quick Start
+To answer the question of which LLM is the most workhorse-like model, this benchmark tests various models across 100 different prompts baiting infinite repetitions.
+
+The primary metric is the avg. tokens produced across the 100 prompts, but results are also classified by the exit condition: 
+
+- Workhorse: Forced to stop by token limits
+- Halfhorse: Quit by itself after reaching half the token limit
+- Garfield: Quit by itself before reaching half the token limit
+
+## How to reproduce
 
 ```bash
-# 1. Set up your API key
+# 1. Set up an Openrouter API key
 cp .env.example .env
-# Edit .env with your OpenRouter key
 
-# 2. Dry run (no API calls, validates setup)
+# 2. (Optional) Dry run - doesn't do API calls, only verifies setup.
 python3 scripts/horse_benchmark.py collect --config config.json --dry-run
 
 # 3. Run collection
@@ -23,28 +26,6 @@ python3 scripts/horse_benchmark.py collect --config config.json
 ```
 
 Results land in `runs/<run_id>/`.
-
-## Configuration
-
-**`config.json`** — Models, parallelism, token limits, detection thresholds.
-
-```jsonc
-{
-  "collect": {
-    "models": ["openai/gpt-4o", "anthropic/claude-sonnet-4"],  // OpenRouter model IDs
-    "max_tokens": 4096,          // Token limit per response
-    "parallelism": 8,            // Concurrent requests
-    "num_runs": 1                // Repeat each prompt N times
-  },
-  "detection": {
-    "borderline_ratio": 0.5      // Threshold for borderline classification
-  }
-}
-```
-
-**`prompts.json`** — 100 prompts across 16 categories, each tagged with attack surfaces.
-
-**`.env`** — Your `OPENROUTER_API_KEY`.
 
 ## Commands
 
@@ -60,9 +41,6 @@ python3 scripts/horse_benchmark.py collect --models "openai/gpt-4o,anthropic/cla
 
 # Resume interrupted run
 python3 scripts/horse_benchmark.py collect --config config.json --resume --run-id <run_id>
-
-# Limit prompts (useful for testing)
-python3 scripts/horse_benchmark.py collect --config config.json --limit 5
 ```
 
 ### Staggered runs (add models incrementally)
@@ -119,29 +97,20 @@ runs/<run_id>/
   prompts_snapshot.json  # Prompts used for this run
 ```
 
-## Prompt Categories
+## Future Work: Models With Insufficient Context
 
-| Category | Prompts | Primary Surfaces |
+These models weren't tested because their context window is too small for the (current) 32K max_tokens output setting.
+
+| Model | Context Window | Notes |
 |---|---|---|
-| echo_trap | 7 | pattern_momentum |
-| direct_request | 4 | compliance_trap, counting_blindness |
-| explicit_repetition | 4 | compliance_trap, counting_blindness, pattern_momentum |
-| pattern_continuation | 5 | pattern_momentum, format_lockin |
-| counting | 8 | counting_blindness, format_lockin |
-| irrational_numbers | 4 | pattern_momentum, compliance_trap |
-| recursive | 7 | format_lockin, compliance_trap |
-| word_chains | 5 | format_lockin, instruction_burial |
-| exhaustive_enumeration | 15 | compliance_trap, format_lockin |
-| snowball | 10 | snowball, format_lockin |
-| encoding | 5 | compliance_trap, pattern_momentum |
-| translation | 4 | compliance_trap, instruction_burial |
-| creative_semantic | 7 | compliance_trap, format_lockin |
-| visual_structural | 4 | snowball, pattern_momentum |
-| random_format | 4 | format_lockin, compliance_trap |
-| disguised_practical | 7 | compliance_trap, format_lockin |
-
-## Requirements
-
-- Python 3.10+
-- `python-dotenv` (`pip install python-dotenv`)
-- OpenRouter API key
+| `microsoft/phi-4` | 16,384 | Phi 4 |
+| `meta-llama/llama-3-8b-instruct` | 8,192 | Llama 3 8B |
+| `google/gemma-3n-e2b-it` | 8,192 | Gemma 3n 2B, also "developer instruction not enabled" |
+| `google/gemma-3n-e4b-it` | 32,768 | Exactly 32K — no room for input tokens |
+| `liquid/lfm-2.5-1.2b-instruct` | 32,768 | LFM 1.2B |
+| `liquid/lfm-2.5-1.2b-thinking` | 32,768 | LFM 1.2B Thinking |
+| `liquid/lfm2-8b-a1b` | 32,768 | LFM2 8B |
+| `liquid/lfm-2-24b-a2b` | 32,768 | LFM2 24B |
+| `mistralai/mistral-small-24b-instruct-2501` | 32,768 | Mistral Small 3 |
+| `qwen/qwen-2.5-7b-instruct` | 32,768 | Qwen 2.5 7B |
+| `essentialai/rnj-1-instruct` | 32,768 | EssentialAI Rnj 1 |
